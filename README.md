@@ -4,7 +4,7 @@ Backend Mock for arquesys
 Install dependencies 
 > pip install -r requirements.txt
 
-Type 
+Run the app
 > uvicorn app:main --reload 
 to run the app
 
