@@ -11,6 +11,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
+# Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -29,7 +30,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_all_users(db, skip=skip, limit=limit)
+    users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
@@ -41,7 +42,14 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
+@app.post("/users/{user_id}/orders/", response_model=schemas.Order)
+def create_order_for_user(
+    user_id: int, order: schemas.OrderCreate, db: Session = Depends(get_db)
+):
+    return crud.create_user_order(db=db, order=order, user_id=user_id)
+
+
 @app.get("/orders/", response_model=list[schemas.Order])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    orders = crud.get_order(db, skip=skip, limit=limit)
+def read_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    orders = crud.get_orders(db, skip=skip, limit=limit)
     return orders

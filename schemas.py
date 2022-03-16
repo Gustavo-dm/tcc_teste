@@ -4,11 +4,8 @@ from pydantic import BaseModel
 
 
 class OrderBase(BaseModel):
-    product: str
-    description: str
-    status: str
-    email: str
-    phone: str
+    title: str
+    description: Optional[str] = None
 
 
 class OrderCreate(OrderBase):
@@ -17,26 +14,7 @@ class OrderCreate(OrderBase):
 
 class Order(OrderBase):
     id: int
-    client_id: int
-    status: str
-
-    class Config:
-        orm_mode = True
-
-
-class ClientBase(BaseModel):
-    email: str
-    phone: str
-    full_name = str
-
-
-class ClientCreate(BaseModel):
-    pass
-
-
-class Client(BaseModel):
-    id: int
-    orders: list[Order] = []
+    owner_id: int
 
     class Config:
         orm_mode = True
@@ -46,11 +24,14 @@ class UserBase(BaseModel):
     email: str
 
 
-class UserCreate(BaseModel):
-    hashed_password: str
+class UserCreate(UserBase):
+    password: str
 
 
-class User(BaseModel):
+class User(UserBase):
     id: int
     is_active: bool
-    is_admin: bool
+    order: list[Order] = []
+
+    class Config:
+        orm_mode = True
